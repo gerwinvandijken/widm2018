@@ -1,0 +1,59 @@
+Wie is de mol 2017
+
+http://www.wieisdemolhints.nl/2018/nieuwe-kandidaten-is-mol-2018/
+https://www.widm.nl/deelnemers.html
+
+database: widm2017
+	gebruiker: widm2017
+	password: laura123
+
+afleveringen
+	1. 2018-01-06 20:30:00
+	2. 2018-01-13 20:30:00
+	3. 2018-01-20 20:30:00
+	4. 2018-01-27 20:30:00
+	5. 2018-02-03 20:30:00
+	6. 2018-02-10 20:30:00
+	7. 2018-02-17 20:30:00
+	8. 2018-02-24 20:30:00
+	9. 2018-03-03 20:30:00
+	10. 2018-03-10 20:30:00
+
+deelnemers
+	Meriël Bouwman
+	Nancy Leijen
+	Laura van Dijken
+	Inge Kaptein
+	Marian Berbee
+	Maaike Verhoeks
+	Renate Rienstra
+	Marit van Roozelaar
+	Jade van Oosten
+	Miranda Oostindiër
+	Brigit Duin
+	Jacqueline Bon
+	Corinne Timmer
+	Sebastiaan de Bruin
+	Wilma Timmer
+	Loet de Steenhuijsen Piters
+	Carla Molenaar
+	Willy Schrieken
+	Noël Dekker
+
+kandidaten
+	1. Jan Versteegh (Presentator)
+	2. Olcay Gulsen (Modeontwerpster)
+	3. Simone Weimans (Journaliste/presentatrice)
+	4. Ruben Hein (Zanger/pianist)
+	5. Stine Jensen (Filosofe/publiciste)
+	6. Loes Haverkort (Actrice)
+	7. Ron Boszhard (Presentator)
+	8. Emilio Guzman (Cabaretier)
+	9. Jean Marc van Tol (Cartoonist/schrijver)
+	10. Bella Hay (Muzikante)
+
+voorspellingen
+	elke deelnemer geeft per aflevering aan:
+	1. afvaller
+	2. de winnaar
+	3. de mol

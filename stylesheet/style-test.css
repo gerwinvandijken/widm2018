@@ -1,0 +1,75 @@
+body {
+  font-size: 18px;
+  font-family: MolFont, Helvetica, Arial, serif;
+}
+
+header a:link, header a:visited, header a:hover, header a:active {
+    color: white;
+}
+
+.kandidaat1-box {
+	display: inline-block;
+	padding: 5px;
+	margin: 10px;
+	//border: 3px solid #73AD21;
+}
+
+.kandidaat1-box-selected {
+	display: inline-block;
+	padding: 5px;
+	margin: 10px;
+	border: 5px solid #2173ad;
+}
+
+.kandidaat-box {
+	display: inline-block;
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    border: 3px solid #73AD21;
+	text-align: center;
+	vertical-align: center;
+}
+
+.kandidaat-box-selected {
+	display: inline-block;
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    border: 5px solid #2173ad;
+	text-align: center;
+	vertical-align: center;
+}
+
+.header {
+	width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+div.header ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+div.header ul li {
+    float: left;
+	font-family: MolFont;
+}
+
+div.header ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+div.header ul li a:hover {
+    background-color: #111;
+}
