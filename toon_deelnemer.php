@@ -40,49 +40,51 @@ if (!isset($_GET["id"]))
 	exit();
 }
 
+$db = Database::getInstance();
+
 // get deelnemer
 $id = $_GET["id"];
-$deelnemer = Database::getDeelnemerById($id);
+$deelnemer = $db->getDeelnemerById($id);
 
 // is ingelogde gebruiker dezelfde als geselecteerde deelnemer?
 $deelnemerLoggedIn = false;
 if($_SESSION['s_logged_n'] == 'true')
 {
 	$loggedInDeelnemer = unserialize($_SESSION['s_deelnemer']);
-	$deelnemerLoggedIn = ($deelnemer->id == $loggedInDeelnemer->id);
+	$deelnemerLoggedIn = ($deelnemer->getId() == $loggedInDeelnemer->getId());
 }
 
 // get all kandidaten
-$kandidaten = Database::getKandidaten();
+$kandidaten = $db->getKandidaten();
 
 // get all afleveringen
-$afleveringen = Database::getAfleveringen();
+$afleveringen = $db->getAfleveringen();
 
 // get all voorspellingen
-$voorspellingen = Database::getVoorspellingen($id);
+$voorspellingen = $db->getVoorspellingen($id);
 
-echo "<h1 class='titel'>Voorspellingen van $deelnemer->voornaam</h1>\n";
+echo "<h1 class='titel'>Voorspellingen van {$deelnemer->getVoornaam()}</h1>\n";
 
 $currentDateTime = new DateTime('now');
 foreach ($voorspellingen as $voorspelling)
 {
-	$aflevering = $afleveringen['id-' . $voorspelling->afleveringId];
+	$aflevering = $afleveringen['id-' . $voorspelling->getAfleveringId()];
 
 	$afvaller = null;
 	$winnaar = null;
 	$mol = null;
 
-	$afleveringGestart = ($currentDateTime > $aflevering->startTijd);
+	$afleveringGestart = ($currentDateTime > $aflevering->getStartTijd());
 
-	if ($voorspelling->afvallerId != 0)
-		$afvaller = $kandidaten['id-' . $voorspelling->afvallerId];
-	if ($voorspelling->winnaarId != 0)
-		$winnaar = $kandidaten['id-' . $voorspelling->winnaarId];
-	if ($voorspelling->molId != 0)
-		$mol = $kandidaten['id-' . $voorspelling->molId];
+	if ($voorspelling->getAfvallerId() != 0)
+		$afvaller = $kandidaten['id-' . $voorspelling->getAfvallerId()];
+	if ($voorspelling->getWinnaarId() != 0)
+		$winnaar = $kandidaten['id-' . $voorspelling->getWinnaarId()];
+	if ($voorspelling->getMolId() != 0)
+		$mol = $kandidaten['id-' . $voorspelling->getMolId()];
 
 	// print titel (might be '?')
-	echo "<h2 class='titel'>Aflevering $aflevering->id. '$aflevering->titel'</h3>\n";
+	echo "<h2 class='titel'>Aflevering {$aflevering->getId()}. '{$aflevering->getTitel()}'</h3>\n";
 
 	// container voor (complete) aflevering
 	if ($afleveringGestart)

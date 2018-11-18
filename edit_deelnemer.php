@@ -22,6 +22,8 @@ function SelecteerKandidaat(aflevering_id, action, kandidaat_id){
 
 <?php
 
+$db = Database::getInstance();
+
 $superUserLoggedIn = false;
 if($_SESSION['s_logged_n'] == 'true')
 {
@@ -32,13 +34,14 @@ if($_SESSION['s_logged_n'] == 'true')
 		$afleveringid = $_POST["afleveringid"];
 		$action = $_POST["action"];
 		$kandidaatid = $_POST["kandidaatid"];
-		
+
+		$deelnemerId = $loggedInDeelnemer->getId();
 		if ($action == "update-afvaller")
-			Database::updateDeelnemerAfvaller($afleveringid, $loggedInDeelnemer->id, $kandidaatid);
+			$db->updateDeelnemerAfvaller($afleveringid, $deelnemerId, $kandidaatid);
 		elseif ($action == "update-winnaar")
-			Database::updateDeelnemerWinnaar($afleveringid, $loggedInDeelnemer->id, $kandidaatid);
+			$db->updateDeelnemerWinnaar($afleveringid, $deelnemerId, $kandidaatid);
 		elseif ($action == "update-mol")
-			Database::updateDeelnemerMol($afleveringid, $loggedInDeelnemer->id, $kandidaatid);
+			$db->updateDeelnemerMol($afleveringid, $deelnemerId, $kandidaatid);
 	}
 }
 else
@@ -52,48 +55,49 @@ function DisplayKandidaten($kandidaten, $afleveringId, $action)
 	foreach ($kandidaten as $kandidaat)
 	{
 		echo "<div class='kandidaat1-box'>\n";
-		$volledigeNaam = $kandidaat->voornaam . " " . $kandidaat->achternaam;
-		if ($kandidaat->afgevallen)
+		$volledigeNaam = $kandidaat->getVoornaam() . " " . $kandidaat->getAchternaam();
+		$voornaam = $kandidaat->getVoornaam();
+		if ($kandidaat->getAfgevallen())
 		{
-			echo "<img src='./images/" . strtolower($kandidaat->voornaam) . "-disabled.jpg' alt='$volledigeNaam (afgevallen)' title='$volledigeNaam (afgevallen)'><br />\n";
+			echo "<img src='./images/" . strtolower($voornaam) . "-disabled.jpg' alt='$volledigeNaam (afgevallen)' title='$volledigeNaam (afgevallen)'><br />\n";
 		}
 		else
 		{
-			echo "<img onclick='SelecteerKandidaat($afleveringId, \"$action\", $kandidaat->id)' src='./images/" . strtolower($kandidaat->voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+			echo "<img onclick='SelecteerKandidaat($afleveringId, \"$action\", {$kandidaat->getId()})' src='./images/" . strtolower($voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
 		}
-		echo "<span>$kandidaat->voornaam</span><br />\n";
+		echo "<span>$voornaam</span><br />\n";
 		echo "</div>\n";
 	}
 }
 
 // get all kandidaten
-$kandidaten = Database::getKandidaten();
+$kandidaten = $db->getKandidaten();
 
 // get all afleveringen
-$afleveringen = Database::getAfleveringen();
+$afleveringen = $db->getAfleveringen();
 
 // update status van (afgevallen) kandidaten
 foreach ($afleveringen as $aflevering)
 {
-	if ($aflevering->afvallerId != 0)
+	if ($aflevering->getAfvallerId() != 0)
 	{
-		$kandidaat = $kandidaten['id-' . $aflevering->afvallerId];
-		$kandidaat->afgevallen = true;
+		$kandidaat = $kandidaten['id-' . $aflevering->getAfvallerId()];
+		$kandidaat->setAfgevallen(true);
 	}
 }
 
-echo "<h1 class='titel'>Edit voorspellingen van $loggedInDeelnemer->voornaam</h1>\n";
+echo "<h1 class='titel'>Edit voorspellingen van {$loggedInDeelnemer->getVoornaam()}</h1>\n";
 
 // get all voorspellingen
-$voorspellingen = Database::getVoorspellingen($loggedInDeelnemer->id);
+$voorspellingen = $db->getVoorspellingen($loggedInDeelnemer->getId());
 
 $currentDateTime = new DateTime('now');
 foreach ($voorspellingen as $voorspelling)
 {
-	$aflevering = $afleveringen['id-' . $voorspelling->afleveringId];
+	$aflevering = $afleveringen['id-' . $voorspelling->getAfleveringId()];
 
 	// aflevering al begonnen? dan skippen
-	if ($aflevering->startTijd < $currentDateTime) {
+	if ($aflevering->getStartTijd() < $currentDateTime) {
 		continue;
 	}
 
@@ -102,15 +106,15 @@ foreach ($voorspellingen as $voorspelling)
 	$mol = null;
 
 	// toon voorspelling van deze (eerstvolgende) aflevering
-	if ($voorspelling->afvallerId != 0)
-		$afvaller = $kandidaten['id-' . $voorspelling->afvallerId];
-	if ($voorspelling->winnaarId != 0)
-		$winnaar = $kandidaten['id-' . $voorspelling->winnaarId];
-	if ($voorspelling->molId != 0)
-		$mol = $kandidaten['id-' . $voorspelling->molId];
+	if ($voorspelling->getAfvallerId() != 0)
+		$afvaller = $kandidaten['id-' . $voorspelling->getAfvallerId()];
+	if ($voorspelling->getWinnaarId() != 0)
+		$winnaar = $kandidaten['id-' . $voorspelling->getWinnaarId()];
+	if ($voorspelling->getMolId() != 0)
+		$mol = $kandidaten['id-' . $voorspelling->getMolId()];
 
 	// print titel (might be '?')
-	echo "<h2 class='titel'>Aflevering $aflevering->id. '$aflevering->titel'</h2>\n";
+	echo "<h2 class='titel'>Aflevering {$aflevering->getId()}. '{$aflevering->getTitel()}'</h2>\n";
 
 	PrintAfleveringDatumTijd($aflevering);
 
@@ -120,7 +124,7 @@ foreach ($voorspellingen as $voorspelling)
 
 	// selectie mogelijkheid voor afvaller
 	echo "<h4>Selecteer afvaller</h4>\n";
-	DisplayKandidaten($kandidaten, $aflevering->id, "update-afvaller");
+	DisplayKandidaten($kandidaten, $aflevering->getId(), "update-afvaller");
 
 	// geselecteerde winnaar
 	echo "<h4>Geselecteerde winnaar</h4>";
@@ -128,7 +132,7 @@ foreach ($voorspellingen as $voorspelling)
 
 	// selectie mogelijkheid voor winnaar
 	echo "<h4>Selecteer winnaar</h4>\n";
-	DisplayKandidaten($kandidaten, $aflevering->id, "update-winnaar");
+	DisplayKandidaten($kandidaten, $aflevering->getId(), "update-winnaar");
 
 	// geselecteerde mol
 	echo "<h4>Geselecteerde mol</h4>";
@@ -136,7 +140,7 @@ foreach ($voorspellingen as $voorspelling)
 
 	// selectie mogelijkheid voor mol
 	echo "<h4>Selecteer mol</h4>\n";
-	DisplayKandidaten($kandidaten, $aflevering->id, "update-mol");
+	DisplayKandidaten($kandidaten, $aflevering->getId(), "update-mol");
 
 	// volgende afleveringen kunnen pas gewijzigd worden als eerstvolgende aflevering is geweest...
 	break;

@@ -29,11 +29,11 @@ require_once('classes/deelnemer.php');
 	{
 		// test
 		$loggedInDeelnemer = unserialize($_SESSION['s_deelnemer']);
-		if ($loggedInDeelnemer->superuser)
-			$displayName = "SUPERUSER: " . $loggedInDeelnemer->voornaam . " " . $loggedInDeelnemer->achternaam;
+		$volledigeNaam = $loggedInDeelnemer->getVoornaam() . " " . $loggedInDeelnemer->getAchternaam();
+		if ($loggedInDeelnemer->getSuperuser())
+			$displayName = "SUPERUSER: " . $volledigeNaam;
 		else
-			$displayName = $loggedInDeelnemer->voornaam . " " . $loggedInDeelnemer->achternaam;
-//		echo "<li style='float:right'><a href='logout.php'>Uitloggen (" . $_SESSION['s_name'] . ")</a></li>\n";
+			$displayName = $volledigeNaam;
 		echo "<li style='float:right'><a href='logout.php'>Uitloggen (" . $displayName . ")</a></li>\n";
 	}
 	else

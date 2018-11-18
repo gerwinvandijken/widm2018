@@ -2,36 +2,61 @@
 include("header.php");
 require_once('classes/database.php');
 
+$db = Database::getInstance();
+
 // get all kandidaten
-$kandidaten = Database::getKandidaten();
+$kandidaten = $db->getKandidaten();
 
 // get all afleveringen
-$afleveringen = Database::getAfleveringen();
+$afleveringen = $db->getAfleveringen();
 
 // update status van (afgevallen) kandidaten
 foreach ($afleveringen as $aflevering)
 {
-	if ($aflevering->afvallerId != 0)
+	$afvallerId = $aflevering->getAfvallerId();
+	if ($afvallerId != 0)
 	{
-		$kandidaat = $kandidaten['id-' . $aflevering->afvallerId];
-		$kandidaat->afgevallen = true;
+		$kandidaat = $kandidaten['id-' . $afvallerId];
+		$kandidaat->setAfgevallen(true);
 	}
 }
+
+// uitslag...
+$molId = 1;			// 1=Jan, 2=Olcay, 4=Ruben
+$winnaarId = 4;
+$verliezerId = 2;
 
 foreach ($kandidaten as $kandidaat)
 {
 	echo "<div class='kandidaat-box'>\n";
-	$volledigeNaam = $kandidaat->voornaam . " " . $kandidaat->achternaam;
-	if ($kandidaat->afgevallen)
+	$volledigeNaam = $kandidaat->getVoornaam() . " " . $kandidaat->getAchternaam();
+	$voornaam = $kandidaat->getVoornaam();
+	if ($kandidaat->getAfgevallen())
 	{
-		echo "<img src='./images/" . strtolower($kandidaat->voornaam) . "-disabled.jpg' alt='$volledigeNaam (afgevallen)' title='$volledigeNaam (afgevallen)'><br />\n";
+		echo "<img src='./images/" . strtolower($voornaam) . "-disabled.jpg' alt='$volledigeNaam (afgevallen)' title='$volledigeNaam (afgevallen)'><br />\n";
 	}
 	else
 	{
-		echo "<img src='./images/" . strtolower($kandidaat->voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		$kandidaatId = $kandidaat->getId();
+		if ($kandidaatId == $molId)
+		{
+			echo "<img src='./images/" . strtolower($voornaam) . "-mol.jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		}
+		else if ($kandidaatId == $verliezerId)
+		{
+			echo "<img src='./images/" . strtolower($voornaam) . "-verliezer.jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		}
+		else if ($kandidaatId == $winnaarId)
+		{
+			echo "<img src='./images/" . strtolower($voornaam) . "-winnaar.jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		}
+		else
+		{
+			echo "<img src='./images/" . strtolower($voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		}
 	}
 	echo "<span>$volledigeNaam</span><br />\n";
-	echo "<span>$kandidaat->beroep</span>\n";
+	echo "<span>{$kandidaat->getBeroep()}</span>\n";
 	echo "</div>\n";
 }
 

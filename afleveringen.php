@@ -46,23 +46,26 @@ require_once('classes/database.php');
 
 <?php
 
+$db = Database::getInstance();
+
 // get all afleveringen
-$afleveringen = Database::getAfleveringen();
+$afleveringen = $db->getAfleveringen();
 
 // get all kandidaten
-$kandidaten = Database::getKandidaten();
+$kandidaten = $db->getKandidaten();
 
 function PrintAfvaller($aflevering)
 {
 	global $kandidaten;
 
-	if ($aflevering->afvallerId != 0)
+	$afvallerId = $aflevering->getAfvallerId();
+	if ($afvallerId != 0)
 	{
-		$afvaller = $kandidaten['id-' . $aflevering->afvallerId];
+		$afvaller = $kandidaten['id-' . $afvallerId];
 
 		echo "<div class='kandidaat-box'>\n";
-		$volledigeNaam = $afvaller->voornaam . " " . $afvaller->achternaam;
-		echo "<img src='./images/" . strtolower($afvaller->voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		$volledigeNaam = $afvaller->getVoornaam() . " " . $afvaller->getAchternaam();
+		echo "<img src='./images/" . strtolower($afvaller->getVoornaam()) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
 		echo "<span>$volledigeNaam</span>\n";
 		echo "</div>\n";
 	}
@@ -84,15 +87,15 @@ function SelecteerAfvaller($aflevering)
 
 	// select-optie voor 'geen afvaller'
 	echo "<div class='kandidaat1-box'>\n";
-	echo "<img onclick='SelecteerAfvaller(" . $aflevering->id . ", 0)' src='./images/widm.png' alt='geen afvaller'><br />\n";
+	echo "<img onclick='SelecteerAfvaller(" . $aflevering->getId() . ", 0)' src='./images/widm.png' alt='geen afvaller'><br />\n";
 	echo "</div>\n";
 
 	// display all WIDM kandidaten
 	foreach ($kandidaten as $kandidaat)
 	{
 		echo "<div class='kandidaat1-box'>\n";
-		$volledigeNaam = $kandidaat->voornaam . " " . $kandidaat->achternaam;
-		echo "<img onclick='SelecteerAfvaller(" . $aflevering->id . ", " . $kandidaat->id . ")' src='./images/" . strtolower(	$kandidaat->voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		$volledigeNaam = $kandidaat->getVoornaam() . " " . $kandidaat->getAchternaam();
+		echo "<img onclick='SelecteerAfvaller(" . $aflevering->getId() . ", " . $kandidaat->getId() . ")' src='./images/" . strtolower(	$kandidaat->getVoornaam()) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
 		echo "</div>\n";
 	}
 }
@@ -101,7 +104,7 @@ $superUserLoggedIn = false;
 if($_SESSION['s_logged_n'] == 'true')
 {
 	$loggedInDeelnemer = unserialize($_SESSION['s_deelnemer']);
-	$superUserLoggedIn = $loggedInDeelnemer->superuser;	
+	$superUserLoggedIn = $loggedInDeelnemer->getSuperuser();	
 }
 
 if ($superUserLoggedIn)
@@ -110,7 +113,7 @@ if ($superUserLoggedIn)
 	if (isset($_POST["afleveringid"]) && isset($_POST["afvallerid"])) {
 		$afleveringid = $_POST["afleveringid"];
 		$afvallerid = $_POST["afvallerid"];
-		Database::updateAfvaller($afleveringid, $afvallerid);
+		$db->updateAfvaller($afleveringid, $afvallerid);
 	}
 }
 
@@ -119,9 +122,10 @@ $currentDateTime = new DateTime('now');
 foreach ($afleveringen as $aflevering)
 {
 	// print titel (might be '?)
-	echo "<h2 class='titel'>Aflevering $aflevering->id. '$aflevering->titel'</h3>\n";
+	$afleveringTitel = $aflevering->getTitel();
+echo "<h2 class='titel'>Aflevering {$aflevering->getId()}. '$afleveringTitel'</h3>\n";
 
-	$afleveringGestart = ($currentDateTime > $aflevering->startTijd);
+	$afleveringGestart = ($currentDateTime > $aflevering->getStartTijd());
 
 	// aflevering nog niet gestart?
 	if (!$afleveringGestart)

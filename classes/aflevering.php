@@ -1,16 +1,36 @@
 <?
 
 class Aflevering {
-	public $id;
-	public $startTijd;
-	public $titel;
-	public $afvallerId;
+	private $id;
+	private $startTijd;
+	private $titel;
+	private $afvallerId;
 
-	public function __construct() {
-		$this->id = -1;
-		$this->startTijd = "";
-		$this->titel = "";
-		$this->afvallerId = 0;
+	public function __construct($id, $startTijd, $titel, $afvallerId) {
+		$this->id = $id;
+		$this->startTijd = $startTijd;
+		$this->titel = $titel;
+		$this->afvallerId = $afvallerId;
+	}
+
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	public function getStartTijd()
+	{
+		return $this->startTijd;
+	}
+
+	public function getTitel()
+	{
+		return $this->titel;
+	}
+
+	public function getAfvallerId()
+	{
+		return $this->afvallerId;
 	}
 }
 

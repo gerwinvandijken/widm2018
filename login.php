@@ -8,13 +8,14 @@ if(isset($_POST['login']))
 	$username = trim(addslashes($_POST['username']));
 	$password = md5(trim($_POST['password']));
 
-	$deelnemer = Database::getDeelnemer($username, $password);
+	$db = Database::getInstance();
+	$deelnemer = $db->getDeelnemer($username, $password);
 
 	if (!is_null($deelnemer))
 	{
 		$_SESSION['s_logged_n'] = 'true';
-		$_SESSION['s_username'] = $deelnemer->gebruikersnaam;
-		$_SESSION['s_name'] = $deelnemer->voornaam . " " . $deelnemer->achternaam;
+		$_SESSION['s_username'] = $deelnemer->getGebruikersnaam();
+		$_SESSION['s_name'] = $deelnemer->getVoornaam() . " " . $deelnemer->getAchternaam();
 		$_SESSION['s_deelnemer'] = serialize($deelnemer);
 
 		header("Location: deelnemers.php");

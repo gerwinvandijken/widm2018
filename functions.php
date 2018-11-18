@@ -7,12 +7,13 @@ function PrintAfleveringDatumTijd($aflevering)
 {
 	global $dagen, $maanden;
 	
-	$dayNr = date_format($aflevering->startTijd, 'w');	// 0=zondag, 1=maandag, etcetera
-	$monthNr = date_format($aflevering->startTijd, 'n') - 1;
-	$tijd = date_format($aflevering->startTijd, 'H:i') . " uur";
+	$afleveringStartTijd = $aflevering->getStartTijd();
+	$dayNr = date_format($afleveringStartTijd, 'w');	// 0=zondag, 1=maandag, etcetera
+	$monthNr = date_format($afleveringStartTijd, 'n') - 1;
+	$tijd = date_format($afleveringStartTijd, 'H:i') . " uur";
 
 	$dag = $dagen[$dayNr];
-	$startDatumTijd = $dag . " " . date_format($aflevering->startTijd, 'j') . " " . $maanden[$monthNr] . " " . date_format($aflevering->startTijd, 'Y') . ", " . $tijd;
+	$startDatumTijd = $dag . " " . date_format($afleveringStartTijd, 'j') . " " . $maanden[$monthNr] . " " . date_format($afleveringStartTijd, 'Y') . ", " . $tijd;
 
 	echo "<h4>$startDatumTijd</h4>\n";
 }
@@ -24,8 +25,8 @@ function PrintKandidaat($kandidaat, $titel)
 	if (is_null($kandidaat))
 		echo "<img src='./images/widm.png' alt='geen $titel geselecteerd' title='geen $titel geselecteerd'><br />\n";
 	else {
-		$volledigeNaam = $kandidaat->voornaam . " " . $kandidaat->achternaam;
-		echo "<img src='./images/" . strtolower($kandidaat->voornaam) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
+		$volledigeNaam = $kandidaat->getVoornaam() . " " . $kandidaat->getAchternaam();
+		echo "<img src='./images/" . strtolower($kandidaat->getVoornaam()) . ".jpg' alt='$volledigeNaam' title='$volledigeNaam'><br />\n";
 		echo "<span>$volledigeNaam</span><br />\n";
 	}
 	echo "</div>\n";
